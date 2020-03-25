@@ -21,7 +21,7 @@ def errors(error):
 # -------------------------------TASKS-------------------------------
 # all results returned in JSON
 
-# request all tasks (modified: 16/06/2019)
+# request all tasks
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():
     tasks = Tasks.query.all()
@@ -41,7 +41,7 @@ def get_list():
     return jsonify({'task':[make_public_task(task.to_json()) for task in tasks]})
 
 
-# request task by id (modified: 16/06/2019)
+# request task by id
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
     task = Tasks.query.get(task_id)
@@ -50,21 +50,21 @@ def get_task(task_id):
         abort(404)
     return jsonify({'task': make_public_task(task.to_json())})
 
-# post a new task (modified: 16/06/2019)
+# post a new task
 @app.route('/todo/api/v1.0/tasks', methods=['POST'])
 def create_task():
     if not request.json or not 'title' in request.json:
         abort(400)
 
     new_id = db.session.query(db.func.max(Tasks.id)).scalar() + 1
-    task = Tasks(id=new_id, title=request.json['title'], description=request.json.get('description', ""), done=False, user_id=request.json.get('user_id', ""))
+    task = Tasks(id=new_id, title=request.json['title'], description=request.json.get('description', ""), done=False )
     db.session.add(task)
     db.session.commit()
     task = Tasks.query.get(new_id)
 
     return jsonify({"task": make_public_task(task.to_json())}), 201
 
-# update a task by id (modified: 16/06/2019)
+# update a task by id
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):    
     if not request.json:
@@ -85,7 +85,7 @@ def update_task(task_id):
 
     return jsonify({"task": make_public_task(task.to_json())})
 
-# delete a task by id (modified: 16/06/2019)
+# delete a task by id
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
     task = Tasks.query.get(task_id)
