@@ -69,7 +69,7 @@ def create_task():
 def update_task(task_id):    
     if not request.json:
         abort(400)
-    if 'done' in request.json and type(request.json['done']) is not bool:
+    if 'done' in request.json and (request.json['done'] not in [1, 0]):
         abort(400)
 
     task = Tasks.query.get(task_id)
